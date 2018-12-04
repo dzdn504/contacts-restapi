@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,18 +12,16 @@ import (
 /*
 APIs:
 GET 	/contacts 		- get all contacts
-GET 	/contacts/{id}	- get a single contact with id
-POST 	/contacts/{id}	- create a new contact
-PUT		/contacts/{id}	- update existing contact
-DELETE	/contacts/{id}	- delete contact
+GET 	/contact/{id}	- get a single contact with id
+POST 	/contact/{id}	- create a new contact
+PUT		/contact/{id}	- update existing contact
+DELETE	/contact/{id}	- delete contact
 */
 
 type Contact struct {
-	ID          string   `json:"id,omitempty`
-	FirstName   string   `json:"first_name,omitempty`
-	LastName    string   `json:"last_name,omitempty`
-	PhoneNumber string   `json:"phone_number,omitempty`
-	HomeAdress  *Address `json:"address,omitempty`
+	ID         string   `json:"id,omitempty`
+	Name       string   `json:"name,omitempty`
+	HomeAdress *Address `json:"address,omitempty`
 }
 
 type Address struct {
@@ -31,9 +30,22 @@ type Address struct {
 	ZipCode string `json:"zip_code,omitempty`
 }
 
+var contacts []Contact
+
+func InitializeContacts() {
+	contacts = append(contacts, Contact{
+		ID: "1", Name: "John Smith",
+		HomeAdress: &Address{City: "Tempe", State: "AZ", ZipCode: "85282"}})
+	contacts = append(contacts, Contact{
+		ID: "2", Name: "Jane Brown",
+		HomeAdress: &Address{City: "Mesa", State: "AZ", ZipCode: "85200"}})
+	contacts = append(contacts, Contact{
+		ID: "3", Name: "Joe Biden"})
+}
+
 // GET all contacts
 func GetAllContactsEndPoint(responseWriter http.ResponseWriter, req *http.Request) {
-	fmt.Fprintln(responseWriter, "not implemented yet !")
+	json.NewEncoder(responseWriter).Encode(contacts)
 }
 
 // GET a single contact with id
@@ -59,11 +71,13 @@ func DeleteContactEndPoint(responseWriter http.ResponseWriter, req *http.Request
 func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/contacts", GetAllContactsEndPoint).Methods("GET")
-	router.HandleFunc("/contacts/{id}", GetContactEndPoint).Methods("GET")
-	router.HandleFunc("/contacts/{id}", CreateContactEndPoint).Methods("POST")
-	router.HandleFunc("/contacts/{id}", UpdateContactEndPoint).Methods("PUT")
-	router.HandleFunc("/contacts/{id}", DeleteContactEndPoint).Methods("DELETE")
+	router.HandleFunc("/contact/{id}", GetContactEndPoint).Methods("GET")
+	router.HandleFunc("/contact/{id}", CreateContactEndPoint).Methods("POST")
+	router.HandleFunc("/contact/{id}", UpdateContactEndPoint).Methods("PUT")
+	router.HandleFunc("/contact/{id}", DeleteContactEndPoint).Methods("DELETE")
 	if err := http.ListenAndServe(":3000", router); err != nil {
 		log.Fatal(err)
 	}
+
+	InitializeContacts()
 }
