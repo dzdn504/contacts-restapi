@@ -75,9 +75,10 @@ func main() {
 	router.HandleFunc("/contact/{id}", CreateContactEndPoint).Methods("POST")
 	router.HandleFunc("/contact/{id}", UpdateContactEndPoint).Methods("PUT")
 	router.HandleFunc("/contact/{id}", DeleteContactEndPoint).Methods("DELETE")
+
+	InitializeContacts()
+
 	if err := http.ListenAndServe(":3000", router); err != nil {
 		log.Fatal(err)
 	}
-
-	InitializeContacts()
 }
