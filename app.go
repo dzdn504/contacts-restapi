@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -15,17 +16,24 @@ type App struct {
 }
 
 var contacts []Contact
+var numContacts int
+
+func newContactID() int {
+	numContacts++
+	return numContacts
+}
 
 // InitializeContacts ...
 func InitializeContacts() {
+	numContacts = 0
 	contacts = append(contacts, Contact{
-		ID: "1", Name: "John Smith",
+		ID: strconv.Itoa(newContactID()), Name: "John Smith",
 		HomeAdress: &Address{City: "Tempe", State: "AZ", ZipCode: "85282"}})
 	contacts = append(contacts, Contact{
-		ID: "2", Name: "Jane Brown",
+		ID: strconv.Itoa(newContactID()), Name: "Jane Brown",
 		HomeAdress: &Address{City: "Mesa", State: "AZ", ZipCode: "85200"}})
 	contacts = append(contacts, Contact{
-		ID: "3", Name: "Joe Biden"})
+		ID: strconv.Itoa(newContactID()), Name: "Joe Biden"})
 }
 
 // GetAllContactsEndPoint ...
@@ -37,7 +45,6 @@ func GetAllContactsEndPoint(w http.ResponseWriter, r *http.Request) {
 // GetContactEndPoint ...
 // GET a single contact with id
 func GetContactEndPoint(w http.ResponseWriter, r *http.Request) {
-	// fmt.Fprintln(w, "not implemented yet !")
 	params := mux.Vars(r)
 	for _, contact := range contacts {
 		if contact.ID == params["id"] {
@@ -51,7 +58,18 @@ func GetContactEndPoint(w http.ResponseWriter, r *http.Request) {
 // CreateContactEndPoint ...
 // POST a contact
 func CreateContactEndPoint(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "not implemented yet !")
+	defer r.Body.Close()
+	var contact Contact
+
+	err := json.NewDecoder(r.Body).Decode(&contact)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	contact.ID = strconv.Itoa(newContactID())
+	contacts = append(contacts, contact)
+	json.NewEncoder(w).Encode(contact)
 }
 
 // UpdateContactEndPoint ...
@@ -71,12 +89,11 @@ func (a *App) Initialize() {
 	a.Router = mux.NewRouter()
 	a.Router.HandleFunc("/contacts", GetAllContactsEndPoint).Methods("GET")
 	a.Router.HandleFunc("/contact/{id}", GetContactEndPoint).Methods("GET")
-	a.Router.HandleFunc("/contact/{id}", CreateContactEndPoint).Methods("POST")
+	a.Router.HandleFunc("/contact", CreateContactEndPoint).Methods("POST")
 	a.Router.HandleFunc("/contact/{id}", UpdateContactEndPoint).Methods("PUT")
 	a.Router.HandleFunc("/contact/{id}", DeleteContactEndPoint).Methods("DELETE")
 
 	InitializeContacts()
-
 }
 
 // Run ...
