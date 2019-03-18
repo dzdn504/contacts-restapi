@@ -1,0 +1,151 @@
+{
+	"info": {
+		"_postman_id": "e7c22d0a-5f47-4548-ac3e-cdc11518cf87",
+		"name": "contacts-restapi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET all contacts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:3000/contacts",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"contacts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET contact",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:3000/contact/4",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"contact",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET contact invalid ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST contact",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Name\": \"Mr. Fancy Pant$\",\n    \"HomeAdress\": {\n    \t\"Street\": \"1000 Money $treet\",\n        \"City\": \"Scottsdale\",\n        \"State\": \"AZ\",\n        \"ZipCode\": \"85054\"\n    }\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/contact",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"contact"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT contact",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"ID\": \"1\",\n    \"Name\": \"John Smith\",\n    \"HomeAdress\": {\n    \t\"Street\": \"1 New St.\",\n        \"City\": \"Tempe\",\n        \"State\": \"AZ\",\n        \"ZipCode\": \"85282\"\n    }\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/contact/1",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"contact",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE contact",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:3000/contact/1",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"contact",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
