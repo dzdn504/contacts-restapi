@@ -75,13 +75,49 @@ func CreateContactEndPoint(w http.ResponseWriter, r *http.Request) {
 // UpdateContactEndPoint ...
 // PUT - update existing contact
 func UpdateContactEndPoint(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "not implemented yet !")
+	defer r.Body.Close()
+	params := mux.Vars(r)
+	var updateContact Contact
+
+	err := json.NewDecoder(r.Body).Decode(&updateContact)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if params["id"] != updateContact.ID {
+		http.Error(w, "Mismatched contact ID in request path and body", http.StatusBadRequest)
+		return
+	}
+
+	for idx, existingContact := range contacts {
+		if existingContact.ID == params["id"] {
+			contacts[idx] = updateContact
+			json.NewEncoder(w).Encode(contacts[idx])
+			return
+		}
+	}
+	http.Error(w, fmt.Sprintf("Invalid contact id: %s. Contact does not exist", params["id"]), http.StatusBadRequest)
 }
 
 // DeleteContactEndPoint ...
 // DELETE contact
 func DeleteContactEndPoint(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "not implemented yet !")
+	defer r.Body.Close()
+	params := mux.Vars(r)
+
+	for idx, contact := range contacts {
+		if contact.ID == params["id"] {
+			contacts = append(contacts[:idx], contacts[idx+1:]...)
+			result := map[string]Contact{
+				"Contact removed: ": contact,
+			}
+			json.NewEncoder(w).Encode(result)
+			return
+		}
+	}
+	http.Error(w, fmt.Sprintf("Invalid contact id: %s. Contact does not exist", params["id"]), http.StatusBadRequest)
+
 }
 
 // Initialize ...

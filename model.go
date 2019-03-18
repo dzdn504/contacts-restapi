@@ -7,6 +7,7 @@ type Contact struct {
 }
 
 type Address struct {
+	Street  string `json:"street,omitempty`
 	City    string `json:"city,omitempty`
 	State   string `json:"state,omitempty`
 	ZipCode string `json:"zip_code,omitempty`
